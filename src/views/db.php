@@ -1,8 +1,8 @@
 <?php
 
-$host = '';
-$name = '';
-$user = '';
+$host = 'localhost';
+$name = 'baitaplon';
+$user = 'root';
 $password = '';
 
 try {

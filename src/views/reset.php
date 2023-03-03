@@ -47,15 +47,15 @@ if(isset($_POST['reset']) && CSRF::validateToken($_POST['token'])) {
   <!-- Basic Page Needs
   ================================================== -->
   <meta charset="utf-8">
-  <title>Yem Yem | Reset Password</title>
+  <title>The Hive | Reset Password</title>
 
   <!-- Mobile Specific Metas
   ================================================== -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="Yem-Yem Supermarket">
+  <meta name="description" content="The Hive Supermarket">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="author" content="Yem-Yem">
-  <meta name="generator" content="Yem-Yem Supermarket">
+  <meta name="author" content="The Hive">
+  <meta name="generator" content="The Hive Supermarket">
   
   <!-- Favicon -->
   <link rel="shortcut icon" type="image/x-icon" href="views/images/favicon.png" />

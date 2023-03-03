@@ -134,7 +134,7 @@ function generateInvoice($date){
                                                 font-family=\"AustinBold, Austin\" font-weight=\"bold\">
                                                 <g id=\"Group\" transform=\"translate(-108.000000, -297.000000)\" fill=\"#000000\">
                                                     <text id=\"AVIATO\">
-                                                        <tspan x=\"108.94\" y=\"325\">YEM-YEM</tspan>
+                                                        <tspan x=\"108.94\" y=\"325\">The Hive</tspan>
                                                     </text>
                                                 </g>
                                             </g>

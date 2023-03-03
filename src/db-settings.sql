@@ -34,6 +34,7 @@ CREATE TABLE `categories` (
   `title` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+--INSERT INTO categories VALUES(1,"Ga");
 
 
 
