@@ -3,6 +3,7 @@
 session_start();
 require __DIR__ . '/../csrf.php';
 require __DIR__ . '/db.php';
+require __DIR__ . '../../models/user.php';
 
 if(isset($_SESSION['name'])) {
     header('Location: /');
@@ -11,18 +12,19 @@ if(isset($_SESSION['name'])) {
 $error = false;
 
 if(isset($_POST['login']) && CSRF::validateToken($_POST['token'])) {
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $password = filter_input(INPUT_POST, 'password');
+    $user = new User();
+    $user->setEmail(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
+    $user->setPassword(filter_input(INPUT_POST, 'password'));
     $statement = $pdo->prepare("SELECT * FROM users WHERE email=?");
-    $statement->execute(array($email));
+    $statement->execute(array($user->getEmail()));
     if($statement->rowCount() > 0) {
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        if(password_verify($password, $result[0]['password'])) {
-            $_SESSION['name'] = $result[0]['lastname'] . ' ' . $result[0]['firstname'];
-            $_SESSION['email'] = $result[0]['email'];
-            $_SESSION['phone'] = $result[0]['phone'];
-            $_SESSION['address'] = $result[0]['address'];
-            $_SESSION['created-time'] = $result[0]['created'];
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC)[0];
+        if(password_verify($user->getPassword(), $result['password'])) {
+            $_SESSION['name'] = $result['lastname'] . ' ' . $result['firstname'];
+            $_SESSION['email'] = $result['email'];
+            $_SESSION['phone'] = $result['phone'];
+            $_SESSION['address'] = $result['address'];
+            $_SESSION['created-time'] = $result['created'];
             header('Location: /');
         }
         $error = true;

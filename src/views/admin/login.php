@@ -4,17 +4,18 @@ session_start();
 
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../../csrf.php';
-
+require __DIR__ . '../../../models/admin.php';
 $error = false;
 
 if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
-    $username = filter_input(INPUT_POST, 'username');
-    $password = filter_input(INPUT_POST, 'password');
+    $admin = new Admin();
+    $admin->setUserName(filter_input(INPUT_POST, 'username'));
+    $admin->setPassword(filter_input(INPUT_POST, 'password'));
     $statement = $pdo->prepare("SELECT * FROM admin WHERE username=?");
-    $statement->execute(array($username));
+    $statement->execute(array($admin->getUserName()));
     if($statement->rowCount() > 0) {
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        if(password_verify($password, $result[0]['password'])) {
+        if(password_verify($admin->getPassword(), $result[0]['password'])) {
             $_SESSION['admin'] = 'admin';
             header('Location: /admin/home');
         }
@@ -45,6 +46,8 @@ if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
                 <div class="card-body text-center">
                     <?php if($error): ?>
                         <div class="alert alert-danger" role="alert">Login Failed, Incorrent Username/Password</div>
+                        <?php echo $admin->getUserName()?>
+                        <?php echo $admin->getPassword()?>
                     <?php endif ?>
                     <h6 class="mb-4 text-muted">Login to your account</h6>
                     <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
