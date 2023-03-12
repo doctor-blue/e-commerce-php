@@ -15,27 +15,31 @@ if(!isset($_GET['email'])) {
 $success;
 
 if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
-    $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_NUMBER_INT);
-    $statement = $pdo->prepare("SELECT * FROM users WHERE email=?");
-    $statement->execute(array(filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL)));
-    if($statement->rowCount() > 0) {
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        if($code === $result[0]['code'] && time() <= $result[0]['expiration']) {
-            $success= true;
-        } else {
-            $success = false;
-        }
-    }
-    else {
-        $success = false;
-    }
+    // $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_NUMBER_INT);
+    // $statement = $pdo->prepare("SELECT * FROM users WHERE email=?");
+    // $statement->execute(array(filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL)));
+    // if($statement->rowCount() > 0) {
+    //     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+    //     if($code === $result[0]['code'] && time() <= $result[0]['expiration']) {
+    //         $success= true;
+    //     } else {
+    //         $success = false;
+    //     }
+    // }
+    // else {
+    //     $success = false;
+    // }
 }
 
 if(isset($_POST['reset']) && CSRF::validateToken($_POST['token'])) {
-    $password = password_hash(filter_input(INPUT_POST, 'password'), PASSWORD_DEFAULT);
-    $statement = $pdo->prepare("UPDATE users SET password=?, code=?, expiration=? WHERE email=?");
-    $statement->execute(array($password, 0, 0, filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL)));
-    header('Location: /login');
+    echo "start reset";
+    // $password = password_hash(filter_input(INPUT_POST, 'password'), PASSWORD_DEFAULT);
+    // echo "\nafter hash";
+    // $statement = $pdo->prepare("UPDATE users SET password=?, code=?, expiration=? WHERE email=?");
+    // echo "after set sql";
+    // $statement->execute(array($password, 0, 0, filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL)));
+    // echo "after execute";
+    // header('Location: /login');
 }
 
 ?>

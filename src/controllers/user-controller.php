@@ -19,6 +19,48 @@ class UserController{
         return true;
     }
 
+    public function login($email,$pwd,$pdo){
+        $statement = $pdo->prepare("SELECT * FROM users WHERE email=?");
+        $statement->execute(array($email));
+        if($statement->rowCount() > 0){
+            return $statement->fetchAll(PDO::FETCH_ASSOC)[0];
+        //     if(strcmp($pwd, $result['password'])==0) {
+        //        return true;
+        //     }else{
+        //         return false;
+        //     }
+        }
+        return NULL;
+    }
+
+    // public function resetPwd($email, $password){
+    //     // $statement = $pdo->prepare("UPDATE users SET password=?, code=?, expiration=? WHERE email=?");
+    //     // $statement->execute(array($password, 0, 0,$email));
+    
+    // }
+
+    public function updateFirstName($firstname,$email,$pdo){
+        $statement = $pdo->prepare("UPDATE users SET firstname=? WHERE email=?");
+        $statement->execute(array($firstname, $email));    
+    }
+
+    public function updateLastName($lastName,$email,$pdo){
+        $statement = $pdo->prepare("UPDATE users SET lastname=? WHERE email=?");
+        $statement->execute(array($lastName, $email));    
+        echo "after execute";
+    }
+
+    public function updateAddress($address,$email,$pdo){
+        $statement = $pdo->prepare("UPDATE users SET address=? WHERE email=?");
+        $statement->execute(array($address,$email));
+        echo "after execute";
+    }
+    public function updatePhone($phone,$email,$pdo){
+        $statement = $pdo->prepare("UPDATE users SET phone=? WHERE email=?");
+        $statement->execute(array($phone, $email));
+    }
+
+
     public function updateUserInfo($user,$email,$pdo){
         echo 'hello';
         $firstname = $user->getFirstName();

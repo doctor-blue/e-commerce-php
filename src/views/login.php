@@ -4,6 +4,7 @@ session_start();
 require __DIR__ . '/../csrf.php';
 require __DIR__ . '/db.php';
 require __DIR__ . '../../models/user.php';
+require __DIR__ . '../../controllers/user-controller.php';
 
 if(isset($_SESSION['name'])) {
     header('Location: /');
@@ -13,23 +14,39 @@ $error = false;
 
 if(isset($_POST['login']) && CSRF::validateToken($_POST['token'])) {
     $user = new User();
+    $userController = new UserController();
     $user->setEmail(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
     $user->setPassword(filter_input(INPUT_POST, 'password'));
-    $statement = $pdo->prepare("SELECT * FROM users WHERE email=?");
-    $statement->execute(array($user->getEmail()));
-    if($statement->rowCount() > 0) {
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC)[0];
-        if(password_verify($user->getPassword(), $result['password'])) {
-            $_SESSION['name'] = $result['lastname'] . ' ' . $result['firstname'];
-            $_SESSION['email'] = $result['email'];
-            $_SESSION['phone'] = $result['phone'];
-            $_SESSION['address'] = $result['address'];
-            $_SESSION['created-time'] = $result['created'];
-            header('Location: /');
-        }
-        $error = true;
+
+
+    // echo "email ".$user->getEmail().' '.$statement->rowCount().' '.$user->getPassword();
+    // if($statement->rowCount() > 0) {
+    //     $result = $statement->fetchAll(PDO::FETCH_ASSOC)[0];
+    //     echo '\n result '.$result['password']. ' compare '.strcmp($user->getPassword(), $result['password']);
+    //     if(strcmp($user->getPassword(), $result['password'])==0) {
+    //         $_SESSION['name'] = $result['lastname'] . ' ' . $result['firstname'];
+    //         $_SESSION['email'] = $result['email'];
+    //         $_SESSION['phone'] = $result['phone'];
+    //         $_SESSION['address'] = $result['address'];
+    //         $_SESSION['created-time'] = $result['created'];
+    //         header('Location: /');
+    //     }else{
+    //     $error = true;
+    //     echo "verify pwd failed";
+    // }
+    // }else
+    //  $error = true;
+    $result = $userController->login($user->getEmail(),$user->getPassword(),$pdo);
+    if($result !=NULL){
+        $_SESSION['name'] = $result['lastname'] . ' ' . $result['firstname'];
+        $_SESSION['email'] = $result['email'];
+        $_SESSION['phone'] = $result['phone'];
+        $_SESSION['address'] = $result['address'];
+        $_SESSION['created-time'] = $result['created'];
+        header('Location: /');
+    }else{
+        $error=true;
     }
-    $error = true;
 }
 
 ?>
