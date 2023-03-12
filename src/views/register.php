@@ -5,6 +5,8 @@ require __DIR__ . '/../csrf.php';
 require __DIR__ . '/db.php';
 require __DIR__ . '../../models/user.php';
 
+require __DIR__ . '../../controllers/user-controller.php';
+
 if (isset($_SESSION['name'])) {
     header('Location: /');
 }
@@ -21,13 +23,25 @@ if (isset($_POST['register']) && CSRF::validateToken($_POST['token'])) {
     $user->setPassword(filter_input(INPUT_POST, 'password'), PASSWORD_DEFAULT);
     $user->setCreated(time());
 
-    $statement = $pdo->prepare("SELECT * FROM users WHERE email=?");
-    $statement->execute(array($user->getEmail()));
-    if ($statement->rowCount() > 0) {
-        $error = true;
-    } else {
-        $statement = $pdo->prepare("INSERT INTO users (firstname, lastname, email, phone, address, password, created) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $statement->execute(array($user->getFirstName(), $user->getLastName(), $user->getEmail(), $user->getPhone(), $user->getAddress(), $user->getPassword(), $user->getCreated()));
+    // $statement = $pdo->prepare("SELECT * FROM users WHERE email=?");
+    // $statement->execute(array($user->getEmail()));
+    // if ($statement->rowCount() > 0) {
+    //     $error = true;
+    // } else {
+    //     $statement = $pdo->prepare("INSERT INTO users (firstname, lastname, email, phone, address, password, created) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    //     $statement->execute(array($user->getFirstName(), $user->getLastName(), $user->getEmail(), $user->getPhone(), $user->getAddress(), $user->getPassword(), $user->getCreated()));
+    //     session_start();
+    //     $_SESSION['name'] = $user->getLastName() . ' ' . $user->getFirstName();
+    //     $_SESSION['email'] = $user->getEmail();
+    //     $_SESSION['phone'] = $user->getPhone();
+    //     $_SESSION['address'] = $user->getAddress();
+    //     $_SESSION['created-time'] = $user->getCreated();
+    //     header('Location: /');
+    // }
+
+    $userController = new UserController();
+    if($userController->register($user,$pdo)){
+        $error = false;
         session_start();
         $_SESSION['name'] = $user->getLastName() . ' ' . $user->getFirstName();
         $_SESSION['email'] = $user->getEmail();
@@ -35,6 +49,8 @@ if (isset($_POST['register']) && CSRF::validateToken($_POST['token'])) {
         $_SESSION['address'] = $user->getAddress();
         $_SESSION['created-time'] = $user->getCreated();
         header('Location: /');
+    }else{
+        $error = true;
     }
 }
 ?>

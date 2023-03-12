@@ -3,36 +3,50 @@
 require __DIR__ . '/header.php';
 require __DIR__ . '/../csrf.php';
 require __DIR__ . '/db.php';
+require __DIR__ . '../../controllers/user-controller.php';
+require __DIR__ . '../../models/user.php';
 
 if(!isset($_SESSION['name'])) {
   header('Location: /login');
 }
 
 if(isset($_POST['update']) && CSRF::validateToken($_POST['token'])) {
+  $user = new User();
+  $userController = new UserController();
   if(isset($_POST['firstname'])) {
     $firstname = filter_input(INPUT_POST, 'firstname');
     $statement = $pdo->prepare("UPDATE users SET firstname=? WHERE email=?");
     $statement->execute(array($firstname, $_SESSION['email']));
     $_SESSION['name'] = explode(' ', $_SESSION['name'])[0] . ' ' . $firstname;
+    // $user->setFirstName(filter_input(INPUT_POST, 'firstname'));
+    // $userController->updateUserInfo($user,'',$pdo);
+    // $_SESSION['name'] = explode(' ', $_SESSION['name'])[0] . ' ' . $firstname;
   }
   if(isset($_POST['lastname'])) {
     $lastname = filter_input(INPUT_POST, 'lastname');
     $statement = $pdo->prepare("UPDATE users SET lastname=? WHERE email=?");
     $statement->execute(array($lastname, $_SESSION['email']));
     $_SESSION['name'] = $lastname . ' ' . explode(' ', $_SESSION['name'])[1];
+    $user->setLastName(filter_input(INPUT_POST, 'lastname'));
+
   }
   if(isset($_POST['address'])) {
     $address = filter_input(INPUT_POST, 'address');
     $statement = $pdo->prepare("UPDATE users SET address=? WHERE email=?");
     $statement->execute(array($address, $_SESSION['email']));
     $_SESSION['address'] = $address;
+    $user->setAddress(filter_input(INPUT_POST, 'address'));
+
   }
   if(isset($_POST['phone'])) {
     $phone = filter_input(INPUT_POST, 'phone');
     $statement = $pdo->prepare("UPDATE users SET phone=? WHERE email=?");
     $statement->execute(array($phone, $_SESSION['email']));
     $_SESSION['phone'] = $phone;
+    $user->setPhone(filter_input(INPUT_POST, 'phone'));
   }
+
+
 }
 
 
