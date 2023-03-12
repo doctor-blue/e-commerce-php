@@ -4,10 +4,13 @@ require __DIR__ . '/header.php';
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../../csrf.php';
 require __DIR__ . '/util.php';
+require __DIR__ . '../../../controllers/category-controller.php';
+
 
 $items;
 $categories;
 $edit = false;
+$categoryController = new CategoryController();
 
 
 if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
@@ -25,11 +28,12 @@ if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
         $statement->execute(array(filter_input(INPUT_POST, 'description'), $id));
     }
     if(isset($_POST['category'])) {
-        $statement = $pdo->prepare("SELECT * FROM categories WHERE title=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'category')));
-        if(!$statement->rowCount() > 0) {
-            $statement = $pdo->prepare("INSERT INTO categories(title) VALUES (?)");
-            $statement->execute(array(filter_input(INPUT_POST, 'category')));
+        // $statement = $pdo->prepare("SELECT * FROM categories WHERE title=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'category')));
+        if($categoryController->findCategoryByTitle(filter_input(INPUT_POST, 'category'),$dpo)) {
+            // $statement = $pdo->prepare("INSERT INTO categories(title) VALUES (?)");
+            // $statement->execute(array(filter_input(INPUT_POST, 'category')));
+            $categoryController->createCategory(filter_input(INPUT_POST, 'category'),$pdo);
         }
         $statement = $pdo->prepare("UPDATE products SET category=? WHERE id=?");
         $statement->execute(array(filter_input(INPUT_POST, 'category'), $id));
@@ -65,9 +69,9 @@ if(isset($_GET['id'])) {
     }
 }
 
-$statement = $pdo->prepare("SELECT * FROM categories");
-$statement->execute();
-$categories = $statement->fetchAll(PDO::FETCH_ASSOC);
+// $statement = $pdo->prepare("SELECT * FROM categories");
+// $statement->execute();
+$categories = $categoryController->fetchAll($pdo);
 
 ?>
 <div class="container">

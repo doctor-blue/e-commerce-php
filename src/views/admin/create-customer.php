@@ -10,7 +10,7 @@ if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $phone = filter_input(INPUT_POST, 'phone');
     $address = filter_input(INPUT_POST, 'address');
-    $password = password_hash(filter_input(INPUT_POST, 'password'), PASSWORD_DEFAULT);
+    $password = filter_input(INPUT_POST, 'password');
   
     $statement = $pdo->prepare("INSERT INTO users (firstname, lastname, email, phone, address, password) VALUES (?, ?, ?, ?, ?, ?)");
     $statement->execute(array($firstname, $lastname, $email, $phone, $address, $password));

@@ -3,6 +3,7 @@
 require __DIR__ . '/header.php';
 require __DIR__ . '/../csrf.php';
 require __DIR__ . '/db.php';
+require __DIR__ . '../../controllers/category-controller.php';
 
 $products;
 $searchEmpty = false;
@@ -10,11 +11,12 @@ $page = 1;
 $results_per_page = 10;
 $page_first_result;
 $number_of_pages;
+$categoryController = new CategoryController();
 
-$statement = $pdo->prepare("SELECT * FROM categories ORDER BY title");
-$statement->execute();
-$categories = $statement->fetchAll(PDO::FETCH_ASSOC);
-
+// $statement = $pdo->prepare("SELECT * FROM categories ORDER BY title");
+// $statement->execute();
+// $categories = $statement->fetchAll(PDO::FETCH_ASSOC);
+$categories = $categoryController->fetchAll($pdo);
 if(!isset($_GET['p'])) {
 	$page = 1;
 } else {

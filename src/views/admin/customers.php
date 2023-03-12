@@ -3,35 +3,44 @@
 require __DIR__ . '/header.php';
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../../csrf.php';
+require __DIR__ . '../../../controllers/user-controller.php';
+
 
 $customers;
 $edit = false;
+$userController = new UserController();
 
 if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
     if(isset($_POST['firstname'])) {
-        $statement = $pdo->prepare("UPDATE users SET firstname=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'firstname'), $id));
+        // $statement = $pdo->prepare("UPDATE users SET firstname=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'firstname'), $id));
+        $userController->updateFirstNameById(filter_input(INPUT_POST, 'firstname'), $id,$pdo);
+    
     }
     if(isset($_POST['lastname'])) {
-        $statement = $pdo->prepare("UPDATE users SET lastname=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'lastname'), $id));
+        // $statement = $pdo->prepare("UPDATE users SET lastname=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'lastname'), $id));
+        $userController->updateLastNameById(filter_input(INPUT_POST, 'lastname'), $id,$pdo);
     }
     if(isset($_POST['phone'])) {
-        $statement = $pdo->prepare("UPDATE users SET phone=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'phone'), $id));
+        // $statement = $pdo->prepare("UPDATE users SET phone=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'phone'), $id));
+        $userController->updatePhoneById(filter_input(INPUT_POST, 'phone'), $id,$pdo);
     }
     if(isset($_POST['address'])) {
-        $statement = $pdo->prepare("UPDATE users SET address=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'address'), $id));
+        // $statement = $pdo->prepare("UPDATE users SET address=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'address'), $id));
+        $userController->updateAddressById(filter_input(INPUT_POST, 'address'), $id,$pdo);
     }
     if(isset($_POST['email'])) {
-        $statement = $pdo->prepare("UPDATE users SET email=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL), $id));
+        // $statement = $pdo->prepare("UPDATE users SET email=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL), $id));
+        $userController->updateEmaileById(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL), $id,$pdo);
     }
     if(isset($_POST['password'])) {
         $statement = $pdo->prepare("UPDATE users SET password=? WHERE id=?");
-        $statement->execute(array(password_hash(filter_input(INPUT_POST, 'password'), PASSWORD_DEFAULT), $id));
+        $statement->execute(array(filter_input(INPUT_POST, 'password'), $id));
     }
 }
 
@@ -45,14 +54,20 @@ if(isset($_GET['id'])) {
 } else {
     if(isset($_POST['delete']) && CSRF::validateToken($_POST['token'])) {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        $statement = $pdo->prepare("DELETE FROM users WHERE id=?");
-        $statement->execute(array($id));
+        // $statement = $pdo->prepare("DELETE FROM users WHERE id=?");
+        // $statement->execute(array($id));
+        $userController->deleteUser($id,$pdo);
     }
     
-    $statement = $pdo->prepare("SELECT * FROM users");
-    $statement->execute();
-    if($statement->rowCount() > 0) {
-        $customers = $statement->fetchAll(PDO::FETCH_ASSOC);
+    // $statement = $pdo->prepare("SELECT * FROM users");
+    // $statement->execute();
+    // if($statement->rowCount() > 0) {
+    //     $customers = $statement->fetchAll(PDO::FETCH_ASSOC);
+    // }
+    $result = $userController->fetchAll($pdo);
+    // echo $customers;
+    if($result!=NULL){
+        $customers = $result;
     }
 }
 
