@@ -4,27 +4,40 @@ require __DIR__ . '/header.php';
 require __DIR__ . '/../db.php';
 require __DIR__ . '/../../csrf.php';
 require __DIR__ . '/util.php';
+require __DIR__ . '/../../models/product.php';
+require __DIR__ . '/../../controllers/product-controller.php';
+require __DIR__ . '/../../controllers/category-controller.php';
 
 if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
-    $title = filter_input(INPUT_POST, 'title');
-    $description = filter_input(INPUT_POST, 'description');
-    $price = filter_input(INPUT_POST, 'price');
-    $category = filter_input(INPUT_POST, 'category');
-    $statement = $pdo->prepare("SELECT count(*) FROM categories WHERE title=?");
-    $statement->execute(array($category));
-    if(!$statement->fetchColumn() > 0) {
-        $statement = $pdo->prepare("INSERT INTO categories(title) VALUES (?)");
-        $statement->execute(array($category));
-    }
-    $paths = serialize(uploadImages());
-    $statement = $pdo->prepare("INSERT INTO products(title, price, description, category, images) VALUES (?, ?, ?, ?, ?)");
-    $statement->execute(array($title, $price, $description, $category, $paths));
+    // $title = filter_input(INPUT_POST, 'title');
+    // $description = filter_input(INPUT_POST, 'description');
+    // $price = filter_input(INPUT_POST, 'price');
+    // $category = filter_input(INPUT_POST, 'category');
+    // $statement = $pdo->prepare("SELECT count(*) FROM categories WHERE title=?");
+    // $statement->execute(array($category));
+    // if(!$statement->fetchColumn() > 0) {
+    //     $statement = $pdo->prepare("INSERT INTO categories(title) VALUES (?)");
+    //     $statement->execute(array($category));
+    // }
+    // $paths = serialize(uploadImages());
+    // $statement = $pdo->prepare("INSERT INTO products(title, price, description, category, images) VALUES (?, ?, ?, ?, ?)");
+    // $statement->execute(array($title, $price, $description, $category, $paths));
+    $productController = new ProductController();
+    $product = new Product();
+    $product->setTitle(filter_input(INPUT_POST, 'title'));
+    $product->setDescription(filter_input(INPUT_POST, 'description'));
+    $product->setPrice(filter_input(INPUT_POST, 'price'));
+    $product->setCategory(filter_input(INPUT_POST, 'category'));
+    $product->setImages(serialize(uploadImages()));
+    $productController->createProduct($product);
     header('Location: /admin/products');
 }
 
-$statement = $pdo->prepare("SELECT * FROM categories");
-$statement->execute();
-$categories = $statement->fetchAll(PDO::FETCH_ASSOC);
+// $statement = $pdo->prepare("SELECT * FROM categories");
+// $statement->execute();
+// $categories = $statement->fetchAll(PDO::FETCH_ASSOC);
+$categoryController = new CategoryController();
+$categories = $categoryController->fetchAll($pdo);
 
 ?>
 <div class="container">

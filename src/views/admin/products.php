@@ -5,68 +5,87 @@ require __DIR__ . '/../db.php';
 require __DIR__ . '/../../csrf.php';
 require __DIR__ . '/util.php';
 require __DIR__ . '../../../controllers/category-controller.php';
+require __DIR__ . '../../../controllers/product-controller.php';
 
 
 $items;
 $categories;
 $edit = false;
 $categoryController = new CategoryController();
+$productController = new ProductController();
 
 
 if(isset($_POST['submit']) && CSRF::validateToken($_POST['token'])) {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-    if(isset($_POST['title'])) {
-        $statement = $pdo->prepare("UPDATE products SET title=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'title'), $id));
+    if(isset($_POST['name'])) {
+        // $statement = $pdo->prepare("UPDATE products SET title=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'name'), $id));
+        $productTitle = filter_input(INPUT_POST, 'name');
+        $productController->updateProductTitle($productTitle, $id);
     }
     if(isset($_POST['price'])) {
-        $statement = $pdo->prepare("UPDATE products SET price=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'price'), $id));
+        // $statement = $pdo->prepare("UPDATE products SET price=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'price'), $id));
+        $productPrice = filter_input(INPUT_POST, 'price');
+        $productController->updateProductPrice($productPrice, $id);
     }
     if(isset($_POST['description'])) {
-        $statement = $pdo->prepare("UPDATE products SET description=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'description'), $id));
+        // $statement = $pdo->prepare("UPDATE products SET description=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'description'), $id));
+        $productDescription = filter_input(INPUT_POST, 'description');
+        $productController->updateProductDescription($productDescription, $id);
     }
     if(isset($_POST['category'])) {
         // $statement = $pdo->prepare("SELECT * FROM categories WHERE title=?");
         // $statement->execute(array(filter_input(INPUT_POST, 'category')));
-        if($categoryController->findCategoryByTitle(filter_input(INPUT_POST, 'category'),$dpo)) {
+        if($categoryController->findCategoryByTitle(filter_input(INPUT_POST, 'category'),$pdo)) {
             // $statement = $pdo->prepare("INSERT INTO categories(title) VALUES (?)");
             // $statement->execute(array(filter_input(INPUT_POST, 'category')));
             $categoryController->createCategory(filter_input(INPUT_POST, 'category'),$pdo);
         }
-        $statement = $pdo->prepare("UPDATE products SET category=? WHERE id=?");
-        $statement->execute(array(filter_input(INPUT_POST, 'category'), $id));
+        // $statement = $pdo->prepare("UPDATE products SET category=? WHERE id=?");
+        // $statement->execute(array(filter_input(INPUT_POST, 'category'), $id));
+        $productCategory = filter_input(INPUT_POST, 'category');
+        $productController->updateProductCategory($productCategory, $id);
     }
     if(isset($_FILES['files'])) {
         $path = serialize(uploadImages());
-        $statement = $pdo->prepare("UPDATE products SET images=? WHERE id=?");
-        $statement->execute(array($path, $id));
+        // $statement = $pdo->prepare("UPDATE products SET images=? WHERE id=?");
+        // $statement->execute(array($path, $id));
+        $productController->updateProductImage($path, $id);
     }
 }
 
 if(isset($_GET['id'])) {
     $edit = true;
-    $statement = $pdo->prepare("SELECT * FROM products WHERE id=?");
-    $statement->execute(array(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT)));
-    if($statement->rowCount() > 0) {
-        $items = $statement->fetchAll(PDO::FETCH_ASSOC);
-    }
-    $statement = $pdo->prepare("SELECT * FROM categories");
-    $statement->execute();
-    $categories = $statement->fetchAll(PDO::FETCH_ASSOC);
+    // $statement = $pdo->prepare("SELECT * FROM products WHERE id=?");
+    // $statement->execute(array(filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT)));
+    // if($statement->rowCount() > 0) {
+    //     echo "Items1".$items;
+    //     $items = $statement->fetchAll(PDO::FETCH_ASSOC);
+    // }
+    $productId = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+    $items = $productController->getProductById($productId);
+    // $statement = $pdo->prepare("SELECT * FROM categories");
+    // $statement->execute();
+    // $categories = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $categoryController->fetchAll($pdo);
 } else {
     if(isset($_POST['delete']) && CSRF::validateToken($_POST['token'])) {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        $statement = $pdo->prepare("DELETE FROM products WHERE id=?");
-        $statement->execute(array($id));
+        // $statement = $pdo->prepare("DELETE FROM products WHERE id=?");
+        // $statement->execute(array($id));
+
+        // TODO: Check why cannot get ID to delete
+        $productController->deleteProduct($id);
     }
     
-    $statement = $pdo->prepare("SELECT * FROM products");
-    $statement->execute();
-    if($statement->rowCount() > 0) {
-        $items = $statement->fetchAll(PDO::FETCH_ASSOC);
-    }
+    // $statement = $pdo->prepare("SELECT * FROM products");
+    // $statement->execute();
+    // if($statement->rowCount() > 0) {
+    //     $items = $statement->fetchAll(PDO::FETCH_ASSOC);
+    // }
+    $items = $productController->fetchAllProducts();
 }
 
 // $statement = $pdo->prepare("SELECT * FROM categories");
@@ -82,7 +101,7 @@ $categories = $categoryController->fetchAll($pdo);
     </div>
     <?php if($edit): ?>
         <div class="card">
-            <div class="card-header">Create Product</div>
+            <div class="card-header">Edit Product</div>
             <div class="card-body">
                 <div class="col-md-6">
                     <form action="/admin/products" method="post" enctype="multipart/form-data">
@@ -153,7 +172,7 @@ $categories = $categoryController->fetchAll($pdo);
                                     <td class="text-end">
                                         <form action="/admin/products" method="post">
                                             <?php CSRF::csrfInputField() ?>
-                                            <input type="text" name="id" value="<?= $item['id'] ?>" hidden>
+                                            <input type="text" name="id" value="<?= $item['id'] ?>" >
                                             <a href="/admin/products?id=<?= $item['id']; ?>" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
                                             <button name="delete" type="submit" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
                                         </form>
