@@ -71,21 +71,28 @@ if(isset($_GET['id'])) {
     // $categories = $statement->fetchAll(PDO::FETCH_ASSOC);
     $categoryController->fetchAll($pdo);
 } else {
-    if(isset($_POST['delete']) && CSRF::validateToken($_POST['token'])) {
-        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        // $statement = $pdo->prepare("DELETE FROM products WHERE id=?");
-        // $statement->execute(array($id));
-
-        // TODO: Check why cannot get ID to delete
-        $productController->deleteProduct($id);
-    }
-    
     // $statement = $pdo->prepare("SELECT * FROM products");
     // $statement->execute();
     // if($statement->rowCount() > 0) {
     //     $items = $statement->fetchAll(PDO::FETCH_ASSOC);
     // }
     $items = $productController->fetchAllProducts();
+
+    // if(isset($_POST['delete']) && CSRF::validateToken($_POST['token'])) {
+    //     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    //     // $statement = $pdo->prepare("DELETE FROM products WHERE id=?");
+    //     // $statement->execute(array($id));
+
+    //     // TODO: Check why cannot get ID to delete
+    //     echo $id;
+
+    //     // $productController->deleteProduct($id);
+    // }
+    foreach($items as $key => $item) {
+        if(isset($_POST['delete'.$key]) && CSRF::validateToken($_POST['token'])) {
+            echo $_POST['delete'.$key];
+        }
+    }
 }
 
 // $statement = $pdo->prepare("SELECT * FROM categories");
@@ -163,18 +170,18 @@ $categories = $categoryController->fetchAll($pdo);
                     </thead>
                     <tbody>
                         <?php if(isset($items)): ?>
-                            <?php foreach($items as $item): ?>
+                            <?php foreach($items as $key => $item): ?>
                                 <tr>
                                     <td><?= $item['title'] ?></td>
-                                    <td>₦ <?= number_format($item['price'], 2) ?></td>
+                                    <td><?= number_format($item['price'], 2) ?> đ</td>
                                     <td><?= $item['description'] ?></td>
                                     <td><?= $item['category'] ?></td>
                                     <td class="text-end">
                                         <form action="/admin/products" method="post">
                                             <?php CSRF::csrfInputField() ?>
-                                            <input type="text" name="id" value="<?= $item['id'] ?>" >
+                                            <input type="text" name="id" value="<?= $item['id'] ?>" hidden>
                                             <a href="/admin/products?id=<?= $item['id']; ?>" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
-                                            <button name="delete" type="submit" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
+                                            <?php echo '<button name="delete'.$key.'" type="submit" class="btn btn-outline-danger btn-rounded" value="'.$item['id'].'"><i class="fas fa-trash"></i></button>'; ?>
                                         </form>
                                     </td>
                                 </tr>
