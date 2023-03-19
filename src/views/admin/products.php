@@ -132,7 +132,7 @@ $categories = $categoryController->fetchAll($pdo);
                     </thead>
                     <tbody>
                         <?php if(isset($items)): ?>
-                            <?php foreach($items as $key => $item): ?>
+                            <?php foreach($items as $item): ?>
                                 <tr>
                                     <td><?= $item['title'] ?></td>
                                     <td><?= number_format($item['price'], 2) ?> đ</td>
@@ -143,7 +143,7 @@ $categories = $categoryController->fetchAll($pdo);
                                             <?php CSRF::csrfInputField() ?>
                                             <input type="text" name="id" value="<?= $item['id'] ?>" hidden>
                                             <a href="/admin/products?id=<?= $item['id']; ?>" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
-                                            <button name="delete" type="submit" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
+                                            <a href="/admin/remove-product?id=<?= $item['id'] ?>" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></a>
                                         </form>
                                     </td>
                                 </tr>

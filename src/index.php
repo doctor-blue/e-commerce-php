@@ -102,6 +102,10 @@ Route::add('/admin/products', function() {
     require __DIR__ . '/views/admin/products.php';
 });
 
+Route::add('/admin/remove-product', function() {
+    require __DIR__ . '/views/admin/remove-product.php';
+});
+
 Route::add('/admin/customers', function() {
     require __DIR__ . '/views/admin/customers.php';
 });
