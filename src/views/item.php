@@ -8,9 +8,9 @@ if(!isset($_GET['id'])) {
 
 $inCart = false;
 
-
-if(isset($_POST['cart']) && CSRF::validateToken($_POST['token'])) {
-	$_SESSION['cart'][$_POST['id']] = array(
+// Need to validate token
+if(isset($_POST['cart'])) {
+    $_SESSION['cart'][$_POST['id']] = array(
         'id' => $_POST['id'],
         'title' => $_POST['title'],
         'price' => $_POST['price'],
@@ -20,6 +20,18 @@ if(isset($_POST['cart']) && CSRF::validateToken($_POST['token'])) {
         'image' => $_POST['image']
     );
 }
+
+// if(isset($_POST['cart']) && CSRF::validateToken($_POST['token'])) {
+// 	$_SESSION['cart'][$_POST['id']] = array(
+//         'id' => $_POST['id'],
+//         'title' => $_POST['title'],
+//         'price' => $_POST['price'],
+//         'description' => $_POST['description'],
+//         'category' => $_POST['category'],
+//         'quantity' => $_POST['quantity'],
+//         'image' => $_POST['image']
+//     );
+// }
 
 foreach($_SESSION['cart'] as $item) {
 	if($item['id'] == $_GET['id']) {
