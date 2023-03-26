@@ -28,7 +28,7 @@ if($statement->rowCount() > 0) {
                             </div>
                             <div class="product-content">
                                 <h4><a href="/item?id=<?= htmlspecialchars($item['id']) ?>"><?= htmlspecialchars($item['title']) ?></a></h4>
-                                <p class="price">₦ <?= number_format($item['price'], 2) ?></p>
+                                <p class="price">$ <?= number_format($item['price'], 2) ?></p>
                             </div>
                         </div>
                     </div>

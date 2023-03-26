@@ -46,7 +46,8 @@ session_start();
                 <div class="col-md-4 col-xs-12 col-sm-4">
                     <div class="contact-number">
                         <i class="tf-ion-ios-telephone"></i>
-                        <span>+234-80-1234-5678</span>
+                        0377683152
+                        <span>+84377683152</span>
                     </div>
                 </div>
                 <div class="col-md-4 col-xs-12 col-sm-4">
@@ -84,7 +85,7 @@ session_start();
 
                                     <div class="cart-summary">
                                         <span>Total</span>
-                                        <span class="total-price">₦ 0.00</span>
+                                        <span class="total-price">$ 0.00</span>
                                     </div>
                                     <ul class="text-center cart-buttons">
                                         <li><a href="/cart" class="btn btn-small">View Cart</a></li>
@@ -102,14 +103,14 @@ session_start();
                                                     <span><?= htmlspecialchars($item['quantity']) ?> x</span>
                                                     <span><?= number_format($item['price'], 2) ?></span>
                                                 </div>
-                                                <h5><strong>₦ <?= number_format($item['quantity'] * $item['price'], 2) ?></strong></h5>
+                                                <h5><strong>$ <?= number_format($item['quantity'] * $item['price'], 2) ?></strong></h5>
                                             </div>
                                             <a href="/cart-remove-item?id=<?= htmlspecialchars($item['id']) ?>"><i class="tf-ion-close"></i></a>
                                         </div>
                                     <?php endforeach; ?>
                                     <div class="cart-summary">
                                         <span>Total</span>
-                                        <span class="total-price">₦<?php 
+                                        <span class="total-price">$<?php 
                                                 $total = 0;
                                                 foreach($_SESSION['cart'] as $item) {
                                                     $total += $item['price'] * $item['quantity'];

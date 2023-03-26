@@ -48,7 +48,7 @@ CREATE TABLE `contact` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 INSERT INTO contact VALUES("1","address","123 ABC Street, XYZ Road");
-INSERT INTO contact VALUES("2","phone","+234-80-1234-5678");
+INSERT INTO contact VALUES("2","phone","+84377683152");
 INSERT INTO contact VALUES("3","facebook","username");
 INSERT INTO contact VALUES("4","twitter","username");
 INSERT INTO contact VALUES("5","instagram","username");
@@ -133,5 +133,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 
+--ALTER TABLE categories CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+--ALTER TABLE products CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
